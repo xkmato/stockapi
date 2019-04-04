@@ -16,19 +16,28 @@ class DirectorSerializer(serializers.ModelSerializer):
 
 
 class StockSerializer(serializers.ModelSerializer):
-    prices = PriceSerializer(many=True)
-    directors = DirectorSerializer(many=True)
+    prices = PriceSerializer(many=True, required=False)
+    directors = DirectorSerializer(many=True, required=False)
     current_price = serializers.SerializerMethodField()
 
     class Meta:
         model = Stock
-        fields = 'name', 'description', 'launch_date', 'current_price', 'prices', 'directors',
+        fields = 'name', 'description', 'launch_date', 'prices', 'directors', 'current_price',
 
     def create(self, validated_data):
-        prices_data = validated_data.pop('prices')
-        stock = Stock.objects.get_or_create(**validated_data)
+        request = self.context['request']
+        prices_data = request.data.getlist('prices')
+        directors_data = request.data.getlist('directors')
+
+        if Stock.objects.filter(name=validated_data['name']).exists():
+            stock = Stock.objects.get(name=validated_data['name'])
+        else:
+            stock = Stock.objects.create(**validated_data)
+
         for price_data in prices_data:
-            Price.objects.create(stock=stock, **price_data)
+            Price.objects.create(stock=stock, **eval(price_data))
+        for director_data in directors_data:
+            Director.objects.create(stock=stock, **eval(director_data))
         return stock
 
     def get_current_price(self, obj):
