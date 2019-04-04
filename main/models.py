@@ -31,15 +31,15 @@ class Stock(TimeStampedModel):
         return self.prices.filter(created_on__gte=start_time, created_on__lt=end_time)
 
     def day_highest_price(self, date):
-        return self.prices_of_date(date).order_by('price').first()
-
-    def lowest_price(self, date):
         return self.prices_of_date(date).order_by('-price').first()
 
-    def closing_price(self, date):
+    def day_lowest_price(self, date):
+        return self.prices_of_date(date).order_by('price').first()
+
+    def day_closing_price(self, date):
         return self.prices_of_date(date).latest('created_on')
 
-    def opening_price(self, date):
+    def day_opening_price(self, date):
         return self.prices_of_date(date).earliest('created_on')
 
     def current_price(self):
