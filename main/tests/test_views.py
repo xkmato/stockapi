@@ -1,7 +1,9 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from django.contrib.auth.models import User
 from django.test import TestCase
+from django.utils import timezone
+from oauth2_provider.models import Application, AccessToken
 from rest_framework.test import APIClient
 
 from main.models import Stock, Price, Director
@@ -10,6 +12,7 @@ from main.models import Stock, Price, Director
 class StockViewSetTest(TestCase):
     def setUp(self) -> None:
         self.user = User.objects.create(username="test", password="test123", is_superuser=True)
+        self.user1 = User.objects.create(username="test1", password="test123", is_superuser=True)
         self.stock1 = Stock.objects.create(
             name="stock1", description="This is a test stock", launch_date=datetime.now()
         )
@@ -27,9 +30,36 @@ class StockViewSetTest(TestCase):
         self.stock2.add_director("Director3")
         self.stock2.add_director("Director4")
 
+        self.app = Application(
+            name="Test App",
+            user=self.user,
+            client_type=Application.CLIENT_CONFIDENTIAL,
+            authorization_grant_type=Application.GRANT_AUTHORIZATION_CODE,
+        )
+        self.app.save()
+
+        self.token = AccessToken.objects.create(
+            user=self.user,
+            token="123456789",
+            application=self.app,
+            scope="read write",
+            expires=timezone.now() + timedelta(days=1),
+        )
+
+        self.token1 = AccessToken.objects.create(
+            user=self.user1,
+            token="12345678911",
+            application=self.app,
+            scope="read",
+            expires=timezone.now() + timedelta(days=1),
+        )
+
+        self.auth_write = "Bearer {}".format(self.token.token)
+        self.auth_read = "Bearer {}".format(self.token1.token)
+
     def test_list_stocks(self):
         client = APIClient()
-        client.credentials(HTTP_AUTHORIZATION="Token " + self.user.auth_token.key)
+        client.credentials(HTTP_AUTHORIZATION=self.auth_read)
         response = client.get("/stocks/")
 
         self.assertEqual(response.status_code, 200)
@@ -58,11 +88,13 @@ class StockViewSetTest(TestCase):
         price_count = Price.objects.count()
         director_count = Director.objects.count()
 
-        #        Test Authentication
         client = APIClient()
+        # Can't write with only read access
+        client.credentials(HTTP_AUTHORIZATION=self.auth_read)
         response = client.post("/stocks/", data=data)
-        self.assertEqual(response.status_code, 401)
-        client.credentials(HTTP_AUTHORIZATION="Token " + self.user.auth_token.key)
+        self.assertEqual(response.status_code, 403)
+        client.credentials(HTTP_AUTHORIZATION=self.auth_write)
+
         response = client.post("/stocks/", data=data)
 
         self.assertEqual(response.status_code, 201)

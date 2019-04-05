@@ -13,6 +13,8 @@ django = "*"
 djangorestframework = "*"
 celery = "*"
 redis = "*"
+flake8 = "*"
+django-oauth-toolkit = "*"
 
 [requires]
 python_version = "3.7"
