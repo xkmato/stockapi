@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from django.core.management import BaseCommand
 
 from main.models import Stock
