@@ -35,35 +35,35 @@ class Stock(TimeStampedModel):
         return self.prices.filter(created_on__gte=start_time, created_on__lt=end_time)
 
     def day_highest_price(self, date):
-        return self.prices_of_date(date).order_by('-price').first()
+        return self.prices_of_date(date).order_by("-price").first()
 
     def day_lowest_price(self, date):
-        return self.prices_of_date(date).order_by('price').first()
+        return self.prices_of_date(date).order_by("price").first()
 
     def day_closing_price(self, date):
-        return self.prices_of_date(date).latest('created_on')
+        return self.prices_of_date(date).latest("created_on")
 
     def day_opening_price(self, date):
-        return self.prices_of_date(date).earliest('created_on')
+        return self.prices_of_date(date).earliest("created_on")
 
     def current_price(self):
-        return self.prices.latest('created_on')
+        return self.prices.latest("created_on")
 
 
 class Director(TimeStampedModel):
     name = models.CharField(max_length=60)
-    stock = models.ForeignKey(Stock, on_delete=models.CASCADE, related_name='directors')
+    stock = models.ForeignKey(Stock, on_delete=models.CASCADE, related_name="directors")
 
 
 class Price(TimeStampedModel):
-    stock = models.ForeignKey(Stock, on_delete=models.CASCADE, related_name='prices')
+    stock = models.ForeignKey(Stock, on_delete=models.CASCADE, related_name="prices")
     price = models.DecimalField(decimal_places=2, max_digits=8)
 
     def __str__(self):
         return self.stock.name
 
     class Meta:
-        ordering = ('created_on',)
+        ordering = ("created_on",)
 
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)

@@ -6,13 +6,13 @@ from main.models import Price, Stock, Director
 class PriceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Price
-        fields = 'price', 'created_on',
+        fields = "price", "created_on"
 
 
 class DirectorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Director
-        fields = 'name',
+        fields = ("name",)
 
 
 class StockSerializer(serializers.ModelSerializer):
@@ -22,15 +22,16 @@ class StockSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Stock
-        fields = 'name', 'description', 'launch_date', 'prices', 'directors', 'current_price',
+        fields = "name", "description", "launch_date", "prices", "directors", "current_price"
 
     def create(self, validated_data):
-        request = self.context['request']
-        prices_data = request.data.getlist('prices')
-        directors_data = request.data.getlist('directors')
+        # Todo request data rejected by drf .is_valid method. Why??
+        request = self.context["request"]
+        prices_data = request.data.getlist("prices")
+        directors_data = request.data.getlist("directors")
 
-        if Stock.objects.filter(name=validated_data['name']).exists():
-            stock = Stock.objects.get(name=validated_data['name'])
+        if Stock.objects.filter(name=validated_data["name"]).exists():
+            stock = Stock.objects.get(name=validated_data["name"])
         else:
             stock = Stock.objects.create(**validated_data)
 
