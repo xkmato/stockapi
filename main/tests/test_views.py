@@ -101,3 +101,12 @@ class StockViewSetTest(TestCase):
         self.assertEqual(Stock.objects.count(), stock_count + 1)
         self.assertEqual(Price.objects.count(), price_count + 2)
         self.assertEqual(Director.objects.count(), director_count + 2)
+
+    def test_price_list(self):
+        client = APIClient()
+        client.credentials(HTTP_AUTHORIZATION=self.auth_read)
+        response = client.get("/stocks/{}/price_list/".format(self.stock1.pk))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.json()), self.stock1.prices.count())
+        self.assertListEqual(response.json(), [{"price": str(p.price), "created_on": p.created_on.isoformat().
+                             replace("+00:00", "Z")} for p in self.stock1.prices.all()])

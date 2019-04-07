@@ -7,6 +7,9 @@ from main.serializers import StockSerializer, PriceSerializer, DirectorSerialize
 
 
 class SerializerTests(TestCase):
+    class FakeRequest(object):
+        GET = {}
+
     def setUp(self) -> None:
         self.stock = Stock.objects.create(
             name="stock3", description="This is a test stock", launch_date=datetime.now()
@@ -14,14 +17,17 @@ class SerializerTests(TestCase):
         self.price = Price.objects.create(stock=self.stock, price=11.41)
         self.director = Director.objects.create(stock=self.stock, name="Test Director")
 
-        self.stock_serializer = StockSerializer(instance=self.stock)
-        self.price_serializer = PriceSerializer(instance=self.price)
-        self.director_serializer = DirectorSerializer(instance=self.director)
+        fake_request = SerializerTests.FakeRequest()
+
+        self.stock_serializer = StockSerializer(instance=self.stock, context={'request': fake_request})
+        self.price_serializer = PriceSerializer(instance=self.price, context={'request': fake_request})
+        self.director_serializer = DirectorSerializer(instance=self.director, context={'request': fake_request})
 
     def test_stock_serializer_contains_expected_fields(self):
         stock_data = self.stock_serializer.data
         self.assertEqual(
-            set(stock_data.keys()), {"name", "description", "launch_date", "prices", "directors", "current_price"}
+            set(stock_data.keys()), {"name", "description", "launch_date", "prices", "directors", "current_price",
+                                     "highest_price", "closing_price", "lowest_price", "opening_price"}
         )
 
     def test_price_serializer_contains_expected_fields(self):
@@ -41,6 +47,10 @@ class SerializerTests(TestCase):
                 name=self.stock.name,
                 description=self.stock.description,
                 launch_date=self.stock.launch_date.isoformat() + "Z",
+                closing_price=self.stock.day_closing_price(datetime.now()).price,
+                opening_price=self.stock.day_opening_price(datetime.now()).price,
+                highest_price=self.stock.day_highest_price(datetime.now()).price,
+                lowest_price=self.stock.day_lowest_price(datetime.now()).price
             ),
         )
 
