@@ -1,0 +1,37 @@
+# use Ubuntu Trusty
+dist:
+  - trusty
+sudo:
+  - false
+
+language: python
+python:
+  - "3.7"
+
+cache:
+  directories:
+    - "$HOME/.cache/pip"
+
+install:
+
+  # install all Python dependencies
+  - travis_retry pip install --upgrade pip
+  - pip --version
+  - travis_retry pip install pipenv
+  - pipenv install
+
+script:
+  - set -e
+
+  - black main --check --quiet || (echo 'The source code could use a bit more black.' && exit 1)
+
+  # check for model changes not reflected in a migration
+  - python manage.py makemigrations --dry-run | grep 'No changes detected' || (echo 'There are changes which require migrations.' && exit 1)
+
+  # run our Python tests
+  - coverage run manage.py test --noinput --verbosity=2
+
+after_success:
+  - coveralls --rcfile .coveragerc_failcheck
+  - coverage report -i --rcfile .coveragerc
+  - coverage report -i --rcfile .coveragerc_failcheck --fail-under=100

@@ -1,3 +1,7 @@
 *.pyc
 .idea
 *.sqlite3
+celerybeat.pid
+celerybeat-schedule
+.coverage
+htmlcov

@@ -15,6 +15,7 @@ celery = "*"
 redis = "*"
 flake8 = "*"
 django-oauth-toolkit = "*"
+coverage = "*"
 
 [requires]
 python_version = "3.7"
