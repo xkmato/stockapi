@@ -8,10 +8,14 @@ from main.models import Stock
 class StockTests(TestCase):
     def setUp(self) -> None:
         self.stock1 = Stock.objects.create(
-            name="stock1", description="This is a test stock", launch_date=datetime.now()
+            name="stock1",
+            description="This is a test stock",
+            launch_date=datetime.now(),
         )
         self.stock2 = Stock.objects.create(
-            name="stock2", description="This is another test stock", launch_date=datetime.now()
+            name="stock2",
+            description="This is another test stock",
+            launch_date=datetime.now(),
         )
 
     def test_update_stock_price(self):
@@ -59,7 +63,9 @@ class StockTests(TestCase):
         self.stock1.update_price(13.21)
         self.stock1.update_price(13.25)
         self.stock1.update_price(14.05)
-        self.assertEqual(float(self.stock1.day_highest_price(datetime.now().date()).price), 14.05)
+        self.assertEqual(
+            float(self.stock1.day_highest_price(datetime.now().date()).price), 14.05
+        )
 
     def test_day_lowest_price(self):
         self.stock1.update_price(12.13)
@@ -68,7 +74,9 @@ class StockTests(TestCase):
         self.stock1.update_price(13.21)
         self.stock1.update_price(13.25)
         self.stock1.update_price(14.05)
-        self.assertEqual(float(self.stock1.day_lowest_price(datetime.now().date()).price), 12.13)
+        self.assertEqual(
+            float(self.stock1.day_lowest_price(datetime.now().date()).price), 12.13
+        )
 
     def test_day_closing_price(self):
         self.stock1.update_price(12.13)
@@ -77,7 +85,9 @@ class StockTests(TestCase):
         self.stock1.update_price(13.21)
         self.stock1.update_price(13.25)
         self.stock1.update_price(14.05)
-        self.assertEqual(float(self.stock1.day_closing_price(datetime.now().date()).price), 14.05)
+        self.assertEqual(
+            float(self.stock1.day_closing_price(datetime.now().date()).price), 14.05
+        )
 
     def test_day_opening_price(self):
         self.stock1.update_price(12.13)
@@ -86,7 +96,9 @@ class StockTests(TestCase):
         self.stock1.update_price(13.21)
         self.stock1.update_price(13.25)
         self.stock1.update_price(14.05)
-        self.assertEqual(float(self.stock1.day_opening_price(datetime.now().date()).price), 12.13)
+        self.assertEqual(
+            float(self.stock1.day_opening_price(datetime.now().date()).price), 12.13
+        )
 
     def test_current_price(self):
         self.stock1.update_price(12.13)

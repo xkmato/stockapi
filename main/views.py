@@ -1,4 +1,7 @@
-from oauth2_provider.contrib.rest_framework import TokenHasReadWriteScope, OAuth2Authentication
+from oauth2_provider.contrib.rest_framework import (
+    TokenHasReadWriteScope,
+    OAuth2Authentication,
+)
 from rest_framework import viewsets
 from rest_framework.decorators import detail_route
 from rest_framework.response import Response
@@ -18,6 +21,7 @@ class StockViewSet(viewsets.ModelViewSet):
     POST `/stocks/` will update stock of that name or create a new stock. Provide it with a list of prices in order to
     update prices
     """
+
     queryset = Stock.objects.all()
     serializer_class = StockSerializer
     permission_classes = (TokenHasReadWriteScope,)

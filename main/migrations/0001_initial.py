@@ -14,7 +14,15 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name="Stock",
             fields=[
-                ("id", models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
                 ("created_on", models.DateTimeField(auto_now_add=True)),
                 ("modified_on", models.DateTimeField(auto_now=True)),
                 ("name", models.CharField(max_length=60)),
@@ -26,14 +34,24 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name="Price",
             fields=[
-                ("id", models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
                 ("created_on", models.DateTimeField(auto_now_add=True)),
                 ("modified_on", models.DateTimeField(auto_now=True)),
                 ("price", models.DecimalField(decimal_places=2, max_digits=8)),
                 (
                     "stock",
                     models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE, related_name="prices", to="main.Stock"
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="prices",
+                        to="main.Stock",
                     ),
                 ),
             ],
@@ -42,14 +60,24 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name="Director",
             fields=[
-                ("id", models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
                 ("created_on", models.DateTimeField(auto_now_add=True)),
                 ("modified_on", models.DateTimeField(auto_now=True)),
                 ("name", models.CharField(max_length=60)),
                 (
                     "stock",
                     models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE, related_name="directors", to="main.Stock"
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="directors",
+                        to="main.Stock",
                     ),
                 ),
             ],

@@ -28,8 +28,18 @@ class StockSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Stock
-        fields = "name", "description", "launch_date", "prices", "directors", "current_price", "highest_price", \
-                 "lowest_price", "closing_price", "opening_price"
+        fields = (
+            "name",
+            "description",
+            "launch_date",
+            "prices",
+            "directors",
+            "current_price",
+            "highest_price",
+            "lowest_price",
+            "closing_price",
+            "opening_price",
+        )
 
     def create(self, validated_data):
         # Todo request data rejected by drf .is_valid method. Why??
@@ -49,9 +59,9 @@ class StockSerializer(serializers.ModelSerializer):
         return stock
 
     def _get_date_from_request(self) -> datetime.date:
-        request = self.context['request']
-        if request.GET.get('date'):
-            date = datetime.strptime(request.GET.get('date'), "%Y-%m-%d").date()
+        request = self.context["request"]
+        if request.GET.get("date"):
+            date = datetime.strptime(request.GET.get("date"), "%Y-%m-%d").date()
         else:
             date = datetime.now().date()
         return date

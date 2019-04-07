@@ -11,13 +11,21 @@ from main.models import Stock, Price, Director
 
 class StockViewSetTest(TestCase):
     def setUp(self) -> None:
-        self.user = User.objects.create(username="test", password="test123", is_superuser=True)
-        self.user1 = User.objects.create(username="test1", password="test123", is_superuser=True)
+        self.user = User.objects.create(
+            username="test", password="test123", is_superuser=True
+        )
+        self.user1 = User.objects.create(
+            username="test1", password="test123", is_superuser=True
+        )
         self.stock1 = Stock.objects.create(
-            name="stock1", description="This is a test stock", launch_date=datetime.now()
+            name="stock1",
+            description="This is a test stock",
+            launch_date=datetime.now(),
         )
         self.stock2 = Stock.objects.create(
-            name="stock2", description="This is another test stock", launch_date=datetime.now()
+            name="stock2",
+            description="This is another test stock",
+            launch_date=datetime.now(),
         )
 
         self.stock1.update_price(13.12)
@@ -108,5 +116,13 @@ class StockViewSetTest(TestCase):
         response = client.get("/stocks/{}/price_list/".format(self.stock1.pk))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.json()), self.stock1.prices.count())
-        self.assertListEqual(response.json(), [{"price": str(p.price), "created_on": p.created_on.isoformat().
-                             replace("+00:00", "Z")} for p in self.stock1.prices.all()])
+        self.assertListEqual(
+            response.json(),
+            [
+                {
+                    "price": str(p.price),
+                    "created_on": p.created_on.isoformat().replace("+00:00", "Z"),
+                }
+                for p in self.stock1.prices.all()
+            ],
+        )
