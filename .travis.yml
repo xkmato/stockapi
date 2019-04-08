@@ -18,7 +18,7 @@ install:
   - travis_retry pip install --upgrade pip
   - pip --version
   - travis_retry pip install pipenv
-  - pipenv install
+  - pipenv install --skiplock
 
 script:
   - set -e
