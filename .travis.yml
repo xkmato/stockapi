@@ -1,6 +1,6 @@
 # use Ubuntu Trusty
 dist:
-  - trusty
+  - bionic
 sudo:
   - false
 
