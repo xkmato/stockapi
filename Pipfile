@@ -17,6 +17,7 @@ flake8 = "*"
 django-oauth-toolkit = "*"
 coverage = "*"
 black = "*"
+coveralls = "*"
 
 [requires]
 python_version = "3.7"
